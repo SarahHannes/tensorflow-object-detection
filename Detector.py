@@ -1,10 +1,10 @@
-import cv2
 import time
 import os
-import tensorflow as tf
-import numpy as np
 
 from tensorflow.python.keras.utils.data_utils import get_file
+import cv2
+import numpy as np
+import tensorflow as tf
 
 np.random.seed(1)
 
@@ -27,7 +27,7 @@ class Detector:
     
     def downloadModel(self, modelURL):
         """
-        Download Tensorflow model specified in modelURL
+        Download Tensorflow model specified in modelURL.
         """
         # extract filename and model names from modelURL
         filename = os.path.basename(modelURL)
@@ -43,6 +43,9 @@ class Detector:
         get_file(fname=filename, origin=modelURL, cache_dir=self.cacheDir, cache_subdir='checkpoints', extract=True)
 
     def loadModel(self):
+        """
+        Load downloaded model.
+        """
         print('[INFO] Loading Model ' + self.modelName)
         # clear session
         tf.keras.backend.clear_session()
@@ -52,6 +55,9 @@ class Detector:
 
 
     def createBoundingBox(self, image, threshold=0.5):
+        """
+        Draw bounding box on all predicted objects in the image.
+        """
         # convert the cv2 loaded image (in BGR) to RGB, this will gives us numpy array
         inputTensor = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2RGB)
         # convert the numpy array to tensor
@@ -78,7 +84,6 @@ class Detector:
 
         # remove overlapping bounding boxes, this will give the indexes of bounding boxes that meet these criteria
         bboxIdx = tf.image.non_max_suppression(bboxs, classScores, max_output_size=50, iou_threshold=threshold, score_threshold=threshold)
-
 
         # if there is any bounding boxes, we need to draw each of the bounding boxes
         if len(bboxIdx) != 0:
@@ -108,35 +113,72 @@ class Detector:
                 # plot the bounding box using cv2, pass starting points as pt1 arg; and ending points as pt2 arg
                 cv2.rectangle(image, pt1=(xmin, ymin), pt2=(xmax, ymax), color=classColor, thickness=3)
                 # display text on the drawn image
-                # cv2.putText(image, text=displayText, org=(xmin, ymin-10), fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=classColor, thickness=2)
-                self.draw_text(image, displayText, org=(xmin, ymin-10), text_color_bg=classColor)
+                # cv2.putText(image, text=displayText, org=(xmin, ymin-10), fontFace=cv2.FONT_HERSHEY_PLAIN, fontScale=1, color=classColor, thickness=2) # display class label without background
+                self.drawTextBorder(image, displayText, pos=(xmin, ymin-10), text_color_bg=classColor) # display class label with background
                 
         # return image on which we have drawn bounding boxes
         return image
 
-    def draw_text(self, image, displayText, font=cv2.FONT_HERSHEY_PLAIN, pos=(0, 0), font_scale=1, font_thickness=2, text_color=(255, 255, 255), text_color_bg=(0, 0, 0)):
+    def drawTextBorder(self, image, displayText, font=cv2.FONT_HERSHEY_PLAIN, pos=(0, 0), font_scale=1, font_thickness=2, text_color=(255, 255, 255), text_color_bg=(0, 0, 0)):
+        """
+        Draw `classColor` filled rectangle for `displayText` background.
+        """
+        # get position of text
         x, y = pos
-        text_size, _ = cv2.getTextSize(displayText, font, font_scale, font_thickness)
-        text_w, text_h = text_size
-        cv2.rectangle(image, pos, (x + text_w, y + text_h), text_color_bg, -1)
-        cv2.putText(image, displayText, (x, y + text_h + font_scale - 1), font, font_scale, text_color, font_thickness)
-
-        return text_size
+        # get text size
+        textSize, _ = cv2.getTextSize(displayText, font, font_scale, font_thickness)
+        # get width and height of text
+        textWdith, textHeight = textSize
+        # draw rectangle
+        cv2.rectangle(image, pos, (x + textWdith, y + textHeight), text_color_bg, -1)
+        # display image
+        cv2.putText(image, displayText, (x, y + textHeight + font_scale - 1), font, font_scale, text_color, font_thickness)
 
     def predictImage(self, imagePath, threshold=0.5):
+        """
+        Predict all objects on image.
+        """
+        # read image
         image = cv2.imread(imagePath)
-
-        bboxImage = self.createBoundingBox(image, threshold)
         
+        # get image filename with extension
+        image_filename = os.path.basename(imagePath)
+        # set folder to save output image
+        saved_image_folder = os.path.join('test', self.modelName)
+        # create folder if not already exist, else, do nothing
+        os.makedirs(saved_image_folder, exist_ok=True)
+        # set saving path
+        new_filename = os.path.join(saved_image_folder, image_filename)
+
+        # create bounding box on image
+        bboxImage = self.createBoundingBox(image, threshold)
+
         # save the image
-        cv2.imwrite(self.modelName + ".jpg", bboxImage)
+        if not cv2.imwrite(new_filename, bboxImage):
+            raise Exception('[Error] Could not save image')
+        # show result
         cv2.imshow("Result", bboxImage)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-    
+
     def predictVideo(self, videoPath, threshold=0.5):
+        """
+        Predict all object on video.
+        """
         # capture the video
         cap = cv2.VideoCapture(videoPath)
+        frameWidth = int(cap.get(3))
+        frameHeight = int(cap.get(4))
+
+        # define saving location
+        video_filename = os.path.basename(videoPath)
+        saved_image_folder = os.path.join('test', self.modelName)
+        os.makedirs(saved_image_folder, exist_ok=True)
+        new_filename = os.path.join(saved_image_folder, video_filename)
+
+        # define codec and videoWriter instance
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        out = cv2.VideoWriter(new_filename, fourcc, 20.0, (frameWidth,frameHeight))
 
         # if can't capture video
         if (cap.isOpened() == False):
@@ -158,15 +200,22 @@ class Detector:
             # put fps text on the image
             cv2.putText(bboxImage, "FPS: " + str(int(fps)), (20,70), cv2.FONT_HERSHEY_PLAIN, 2, (0,255,0), 2)
 
+            # save the frame
+            out.write(image)
+
             # show the video frame
             cv2.imshow("Result", bboxImage)
+
             # define keypress
             key = cv2.waitKey(1) & 0xFF
+            
             # pressing 'q' on the keyboard will break the loop
             if key == ord('q'):
                 break
 
             # otherwise, capture next frame
             (success, image) = cap.read()
-        # destroy all windows on quit
+        # Release everything if job is finished
+        cap.release()
+        out.release()
         cv2.destroyAllWindows()
