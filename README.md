@@ -17,5 +17,17 @@ Higher threshold means more objects will be missed by the model.
 #### Step 5: Save images (.JPG) and videos (.MP4) for object detection under `/test` folder
 
 
+## Output
+
+| Original Image/ Video  | ResNet50 | MobileNetv2 |
+| -----------------------| ------------- | ------------- |
+| <img src="test/1.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/1.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/1.jpg" width=400>  |
+| <img src="test/2.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/2.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/2.jpg" width=400>  |
+| <img src="test/3.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/3.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/3.jpg" width=400>  |
+| <img src="test/4.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/4.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/4.jpg" width=400>  |
+| <img src="test/5.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/5.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/5.jpg" width=400>  |
+| <img src="test/6.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/6.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/6.jpg" width=400>  |
+| <img src="test/7.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/7.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/7.jpg" width=400>  |
+
 ## Credit
 - <a href="https://www.youtube.com/watch?v=2yQqg_mXuPQ">TensorFlow Object Detection COMPLETE TUTORIAL | 40 TensorFlow Object Detection Models</a>
