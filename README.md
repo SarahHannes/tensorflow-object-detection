@@ -28,6 +28,8 @@ Higher threshold means more objects will be missed by the model.
 | <img src="test/5.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/5.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/5.jpg" width=400>  |
 | <img src="test/6.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/6.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/6.jpg" width=400>  |
 | <img src="test/7.jpg" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/7.jpg" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/7.jpg" width=400>  |
+| <img src="test/8.gif" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/8.gif" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/8.gif" width=400>  |
+| <img src="test/9.gif" width=400> | <img src="test/centernet_resnet50_v1_fpn_512x512_coco17_tpu-8/9.gif" width=400> | <img src="test/ssd_mobilenet_v2_320x320_coco17_tpu-8/9.gif" width=400>  |
 
 ## Credit
 - <a href="https://www.youtube.com/watch?v=2yQqg_mXuPQ">TensorFlow Object Detection COMPLETE TUTORIAL | 40 TensorFlow Object Detection Models</a>
